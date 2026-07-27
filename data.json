@@ -1,5 +1,6 @@
 {
   "transactions": [
+     { "date": "2026-07-01", "deposit": 0, "buy_price_pln": 0, "units": 0},
     { "date": "2026-07-27", "deposit": 10, "buy_price_pln": 717.63, "units": 0.0278 }
   ]
 }
