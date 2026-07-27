@@ -1,7 +1,5 @@
 {
   "transactions": [
-    { "date": "2026-08-01", "deposit": 100, "buy_price_pln": 572.30, "units": 0.3496 },
-    { "date": "2026-09-05", "deposit": 150, "buy_price_pln": 578.10, "units": 0.5190 },
-    { "date": "2026-10-10", "deposit": 200, "buy_price_pln": 565.40, "units": 0.7076 }
+    { "date": "2026-07-27", "deposit": 10, "buy_price_pln": 165.22, "units": 0.0278 },
   ]
 }
