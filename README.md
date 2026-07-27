@@ -1,4 +1,4 @@
-# 🌱 Moje Oszczędności — tracker wpłat siostrzenicy
+# 🌱 Moje Oszczędności — tracker wpłat
 
 Prosta strona na GitHub Pages pokazująca:
 - **Wpłaty ** — ile udało się odłożyć
