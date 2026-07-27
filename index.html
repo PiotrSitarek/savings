@@ -361,7 +361,7 @@
     });
 
     // Add "today" point with current price
-    chartLabels.push('Dziś');
+    chartLabels.push(fmtDateShort(price.updated_at));
     depositLine.push(cumDeposits);
     matchedLine.push(cumDeposits * 2);
     valueLine.push(Math.round(totalUnits * currentPrice * 100) / 100);
