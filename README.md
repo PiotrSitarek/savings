@@ -2,7 +2,7 @@
 
 Prosta strona na GitHub Pages pokazująca:
 - **Wpłaty ** — ile udało się odłożyć
-- **Z dopłatą (×2)** —
+- **Z dopłatą (×2)**
 - **Wartość inwestycji** — ile warte są jednostki ETF VWCE dziś
 
 Cena ETF aktualizuje się automatycznie co piątek przez GitHub Actions.
@@ -28,7 +28,7 @@ Cena ETF aktualizuje się automatycznie co piątek przez GitHub Actions.
 3. Kliknij "Commit changes"
 4. Strona zaktualizuje się w ciągu minuty
 
-**Ważne:** `units` to ile jednostek kupił broker za **podwojoną** kwotę (wpłata siostrzenicy + dopłata wujka).
+**Ważne:** `units` to ile jednostek kupił broker za **podwojoną** kwotę
 
 ---
 
