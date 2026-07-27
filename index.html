@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moje Oszczędności</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F6F8;
+      --card: #FFFFFF;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --green: #059669;
+      --green-light: #D1FAE5;
+      --amber: #D97706;
+      --amber-light: #FEF3C7;
+      --blue: #2563EB;
+      --blue-light: #DBEAFE;
+      --red: #DC2626;
+      --red-light: #FEE2E2;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-top: 16px;
+    }
+
+    .header-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Cards ── */
+    .cards {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-label .icon {
+      font-size: 16px;
+    }
+
+    .card-value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .card--deposits { border-left: 4px solid var(--amber); }
+    .card--deposits .card-value { color: var(--amber); }
+
+    .card--matched { border-left: 4px solid var(--blue); }
+    .card--matched .card-value { color: var(--blue); }
+
+    .card--investment { border-left: 4px solid var(--green); }
+    .card--investment .card-value { color: var(--green); }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .badge--up {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .badge--down {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .badge--match {
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ── Chart section ── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .chart-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Transaction history ── */
+    .tx-list {
+      list-style: none;
+    }
+
+    .tx-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tx-item:last-child {
+      border-bottom: none;
+    }
+
+    .tx-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+      min-width: 90px;
+    }
+
+    .tx-details {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      flex: 1;
+    }
+
+    .tx-amount {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .tx-amount span {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    /* ── Info box ── */
+    .info-box {
+      background: var(--blue-light);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .info-box p {
+      font-size: 13px;
+      color: var(--blue);
+      line-height: 1.6;
+    }
+
+    .info-box strong {
+      font-weight: 600;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer .update-time {
+      margin-bottom: 4px;
+    }
+
+    /* ── Loading state ── */
+    .loading {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* ── Responsive ── */
+    @media (min-width: 520px) {
+      .cards {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .card-value {
+        font-size: 26px;
+      }
+      .container {
+        padding: 32px 24px 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <span class="header-icon">🌱</span>
+      <h1>Moje Oszczędności</h1>
+      <p>Twoje pieniądze pracują na przyszłość</p>
+    </header>
+
+    <div id="app">
+      <div class="loading">Ładowanie danych…</div>
+    </div>
+
+  </div>
+
+  <script>
+  (async function() {
+    // ── Helpers ──
+    const fmt = (n) => n.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' zł';
+    const fmtUnits = (n) => n.toLocaleString('pl-PL', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+    const fmtDate = (s) => {
+      const d = new Date(s);
+      return d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+    const fmtDateShort = (s) => {
+      const d = new Date(s);
+      return d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' });
+    };
+
+    // ── Fetch data ──
+    let data, price;
+    try {
+      const [dataResp, priceResp] = await Promise.all([
+        fetch('data.json'),
+        fetch('price.json')
+      ]);
+      data = await dataResp.json();
+      price = await priceResp.json();
+    } catch (e) {
+      document.getElementById('app').innerHTML =
+        '<div class="loading">Nie udało się załadować danych. Spróbuj odświeżyć stronę.</div>';
+      return;
+    }
+
+    const tx = data.transactions;
+    const currentPrice = price.etf_price_pln;
+
+    // ── Calculations ──
+    const totalDeposits = tx.reduce((s, t) => s + t.deposit, 0);
+    const totalMatched = totalDeposits * 2;
+    const totalUnits = tx.reduce((s, t) => s + t.units, 0);
+    const investmentValue = totalUnits * currentPrice;
+    const gainLoss = investmentValue - totalMatched;
+    const gainLossPct = totalMatched > 0 ? (gainLoss / totalMatched) * 100 : 0;
+
+    // ── Chart data: cumulative at each transaction + today ──
+    const chartLabels = [];
+    const depositLine = [];
+    const matchedLine = [];
+    const valueLine = [];
+
+    let cumDeposits = 0;
+    let cumUnits = 0;
+
+    tx.forEach(t => {
+      cumDeposits += t.deposit;
+      cumUnits += t.units;
+      chartLabels.push(fmtDateShort(t.date));
+      depositLine.push(cumDeposits);
+      matchedLine.push(cumDeposits * 2);
+      valueLine.push(Math.round(cumUnits * t.buy_price_pln * 100) / 100);
+    });
+
+    // Add "today" point with current price
+    chartLabels.push('Dziś');
+    depositLine.push(cumDeposits);
+    matchedLine.push(cumDeposits * 2);
+    valueLine.push(Math.round(totalUnits * currentPrice * 100) / 100);
+
+    // ── Render ──
+    const app = document.getElementById('app');
+    app.innerHTML = `
+      <!-- Cards -->
+      <div class="cards">
+        <div class="card card--deposits">
+          <div class="card-label"><span class="icon">💰</span> Twoje wpłaty</div>
+          <div class="card-value">${fmt(totalDeposits)}</div>
+          <div class="card-sub">łącznie ${tx.length} wpłat</div>
+        </div>
+        <div class="card card--matched">
+          <div class="card-label"><span class="icon">🤝</span> Z dopłatą wujka <span class="badge badge--match">×2</span></div>
+          <div class="card-value">${fmt(totalMatched)}</div>
+          <div class="card-sub">za każdą Twoją złotówkę, wujek dokłada drugą</div>
+        </div>
+        <div class="card card--investment">
+          <div class="card-label"><span class="icon">📈</span> Wartość inwestycji</div>
+          <div class="card-value">${fmt(investmentValue)}</div>
+          <div class="card-sub">
+            ${gainLoss >= 0 ? '+' : ''}${fmt(gainLoss)}
+            <span class="badge ${gainLoss >= 0 ? 'badge--up' : 'badge--down'}">
+              ${gainLoss >= 0 ? '▲' : '▼'} ${Math.abs(gainLossPct).toFixed(1)}%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="section">
+        <div class="section-title">Jak rosną Twoje oszczędności</div>
+        <div class="chart-wrap">
+          <canvas id="growth-chart"></canvas>
+        </div>
+        <div class="chart-legend">
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#D97706"></div> Twoje wpłaty</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#2563EB"></div> Z dopłatą wujka</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#059669"></div> Wartość inwestycji</div>
+        </div>
+      </div>
+
+      <!-- Transactions -->
+      <div class="section">
+        <div class="section-title">Historia wpłat</div>
+        <ul class="tx-list">
+          ${tx.slice().reverse().map(t => `
+            <li class="tx-item">
+              <div class="tx-date">${fmtDate(t.date)}</div>
+              <div class="tx-details">${fmtUnits(t.units)} jedn. × ${fmt(t.buy_price_pln)}</div>
+              <div class="tx-amount">
+                ${fmt(t.deposit)}
+                <span>+ ${fmt(t.deposit)} wujek</span>
+              </div>
+            </li>
+          `).join('')}
+        </ul>
+
+        <div class="info-box">
+          <p>
+            <strong>Co tu się dzieje?</strong> Za każdą złotówkę, którą wpłacasz, wujek dokłada drugą.
+            Razem kupujemy jednostki funduszu <strong>VWCE</strong> — to koszyk akcji
+            z&nbsp;całego świata. Wartość inwestycji zmienia się każdego dnia razem z&nbsp;rynkiem.
+            Czasem spada, czasem rośnie — ale&nbsp;na&nbsp;dłuższą metę, cierpliwość się opłaca&nbsp;📊
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="update-time">Cena ETF zaktualizowana: ${fmtDate(price.updated_at)}</div>
+        <div>1 VWCE = ${fmt(currentPrice)} · ${fmtUnits(totalUnits)} jednostek</div>
+      </div>
+    `;
+
+    // ── Draw chart ──
+    const ctx = document.getElementById('growth-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartLabels,
+        datasets: [
+          {
+            label: 'Twoje wpłaty',
+            data: depositLine,
+            borderColor: '#D97706',
+            backgroundColor: 'rgba(217, 119, 6, 0.08)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#D97706',
+          },
+          {
+            label: 'Z dopłatą wujka',
+            data: matchedLine,
+            borderColor: '#2563EB',
+            backgroundColor: 'rgba(37, 99, 235, 0.06)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#2563EB',
+          },
+          {
+            label: 'Wartość inwestycji',
+            data: valueLine,
+            borderColor: '#059669',
+            backgroundColor: 'rgba(5, 150, 105, 0.08)',
+            borderWidth: 2.5,
+            fill: false,
+            tension: 0.3,
+            pointRadius: 5,
+            pointBackgroundColor: '#059669',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleFont: { size: 12, weight: '500' },
+            bodyFont: { size: 12 },
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: (ctx) => ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + ' zł'
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 11 }, color: '#9CA3AF' }
+          },
+          y: {
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            ticks: {
+              font: { size: 11 },
+              color: '#9CA3AF',
+              callback: (v) => v.toLocaleString('pl-PL') + ' zł'
+            }
+          }
+        }
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
