@@ -1,8 +1,8 @@
 # 🌱 Moje Oszczędności — tracker wpłat siostrzenicy
 
 Prosta strona na GitHub Pages pokazująca:
-- **Wpłaty siostrzenicy** — ile udało się odłożyć
-- **Z dopłatą wujka (×2)** — za każdą złotówkę wujek dokłada drugą
+- **Wpłaty ** — ile udało się odłożyć
+- **Z dopłatą (×2)** —
 - **Wartość inwestycji** — ile warte są jednostki ETF VWCE dziś
 
 Cena ETF aktualizuje się automatycznie co piątek przez GitHub Actions.
@@ -21,7 +21,7 @@ Cena ETF aktualizuje się automatycznie co piątek przez GitHub Actions.
 | Pole | Co wpisać | Skąd wziąć |
 |------|-----------|------------|
 | `date` | Data wpłaty | Kalendarz |
-| `deposit` | Kwota wpłaty siostrzenicy w PLN | Przelew |
+| `deposit` | Kwota wpłaty w PLN | Przelew |
 | `buy_price_pln` | Cena 1 jednostki VWCE w PLN | Potwierdzenie transakcji u brokera |
 | `units` | Ile jednostek kupiono | Potwierdzenie transakcji u brokera |
 
