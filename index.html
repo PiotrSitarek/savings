@@ -377,9 +377,8 @@
           <div class="card-sub">łącznie ${tx.length} wpłat</div>
         </div>
         <div class="card card--matched">
-          <div class="card-label"><span class="icon">🤝</span> Z dopłatą wujka <span class="badge badge--match">×2</span></div>
+          <div class="card-label"><span class="icon">🤝</span> Z dopłatą<span class="badge badge--match">×2</span></div>
           <div class="card-value">${fmt(totalMatched)}</div>
-          <div class="card-sub">za każdą Twoją złotówkę, wujek dokłada drugą</div>
         </div>
         <div class="card card--investment">
           <div class="card-label"><span class="icon">📈</span> Wartość inwestycji</div>
@@ -401,7 +400,7 @@
         </div>
         <div class="chart-legend">
           <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#D97706"></div> Twoje wpłaty</div>
-          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#2563EB"></div> Z dopłatą wujka</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#2563EB"></div> Z dopłatą</div>
           <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#059669"></div> Wartość inwestycji</div>
         </div>
       </div>
@@ -416,7 +415,7 @@
               <div class="tx-details">${fmtUnits(t.units)} jedn. × ${fmt(t.buy_price_pln)}</div>
               <div class="tx-amount">
                 ${fmt(t.deposit)}
-                <span>+ ${fmt(t.deposit)} wujek</span>
+                <span>+ ${fmt(t.deposit)}</span>
               </div>
             </li>
           `).join('')}
@@ -424,7 +423,7 @@
 
         <div class="info-box">
           <p>
-            <strong>Co tu się dzieje?</strong> Za każdą złotówkę, którą wpłacasz, wujek dokłada drugą.
+            <strong>Co tu się dzieje?</strong> Za każdą złotówkę, którą wpłacasz, dokładamy drugą.
             Razem kupujemy jednostki funduszu <strong>VWCE</strong> — to koszyk akcji
             z&nbsp;całego świata. Wartość inwestycji zmienia się każdego dnia razem z&nbsp;rynkiem.
             Czasem spada, czasem rośnie — ale&nbsp;na&nbsp;dłuższą metę, cierpliwość się opłaca&nbsp;📊
@@ -458,7 +457,7 @@
             pointBackgroundColor: '#D97706',
           },
           {
-            label: 'Z dopłatą wujka',
+            label: 'Z dopłatą',
             data: matchedLine,
             borderColor: '#2563EB',
             backgroundColor: 'rgba(37, 99, 235, 0.06)',
