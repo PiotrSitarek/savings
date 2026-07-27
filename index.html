@@ -320,8 +320,8 @@
     let data, price;
     try {
       const [dataResp, priceResp] = await Promise.all([
-        fetch('data.json'),
-        fetch('price.json')
+        fetch('data.json?v=' + Date.now()),
+        fetch('price.json?v=' + Date.now())
       ]);
       data = await dataResp.json();
       price = await priceResp.json();
