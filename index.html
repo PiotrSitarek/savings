@@ -342,7 +342,7 @@
     const gainLoss = investmentValue - totalMatched;
     const gainLossPct = totalMatched > 0 ? (gainLoss / totalMatched) * 100 : 0;
 
-    // ── Chart data: cumulative at each transaction + today ──
+    // ── Chart data ──
     const chartLabels = [];
     const depositLine = [];
     const matchedLine = [];
@@ -351,7 +351,20 @@
     let cumDeposits = 0;
     let cumUnits = 0;
 
-    tx.forEach(t => {
+    // Only real transactions (skip any zero-amount entries)
+    const realTx = tx.filter(t => t.deposit > 0 || t.units > 0);
+
+    // Auto-add starting zero point (2 weeks before first transaction)
+    if (realTx.length > 0) {
+      const firstDate = new Date(realTx[0].date);
+      firstDate.setDate(firstDate.getDate() - 14);
+      chartLabels.push(fmtDateShort(firstDate.toISOString()));
+      depositLine.push(0);
+      matchedLine.push(0);
+      valueLine.push(0);
+    }
+
+    realTx.forEach(t => {
       cumDeposits += t.deposit;
       cumUnits += t.units;
       chartLabels.push(fmtDateShort(t.date));
@@ -360,11 +373,18 @@
       valueLine.push(Math.round(cumUnits * t.buy_price_pln * 100) / 100);
     });
 
-    // Add "today" point with current price
-    chartLabels.push(fmtDateShort(price.updated_at));
-    depositLine.push(cumDeposits);
-    matchedLine.push(cumDeposits * 2);
-    valueLine.push(Math.round(totalUnits * currentPrice * 100) / 100);
+    // Current-value point: only if price update is newer than last transaction
+    const lastTxDate = realTx.length > 0 ? new Date(realTx[realTx.length - 1].date) : new Date();
+    const priceDate = new Date(price.updated_at);
+
+    if (priceDate > lastTxDate) {
+      chartLabels.push(fmtDateShort(price.updated_at));
+      depositLine.push(cumDeposits);
+      matchedLine.push(cumDeposits * 2);
+      valueLine.push(Math.round(totalUnits * currentPrice * 100) / 100);
+    } else {
+      valueLine[valueLine.length - 1] = Math.round(totalUnits * currentPrice * 100) / 100;
+    }
 
     // ── Render ──
     const app = document.getElementById('app');
@@ -374,7 +394,7 @@
         <div class="card card--deposits">
           <div class="card-label"><span class="icon">💰</span> Twoje wpłaty</div>
           <div class="card-value">${fmt(totalDeposits)}</div>
-          <div class="card-sub">łącznie ${tx.length} wpłat</div>
+          <div class="card-sub">łącznie ${realTx.length} wpłat</div>
         </div>
         <div class="card card--matched">
           <div class="card-label"><span class="icon">🤝</span> Z dopłatą<span class="badge badge--match">×2</span></div>
@@ -409,7 +429,7 @@
       <div class="section">
         <div class="section-title">Historia wpłat</div>
         <ul class="tx-list">
-          ${tx.slice().reverse().map(t => `
+          ${realTx.slice().reverse().map(t => `
             <li class="tx-item">
               <div class="tx-date">${fmtDate(t.date)}</div>
               <div class="tx-details">${fmtUnits(t.units)} jedn. × ${fmt(t.buy_price_pln)}</div>
